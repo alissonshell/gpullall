@@ -3,6 +3,11 @@
 
 Pull all your *git* repositories.
 
+**Installation**
+
+``pip install -r requirements.txt``
+``python setup.py install``
+
 **Usage**
 
 ``--directory -D``  Enter a directory manually
