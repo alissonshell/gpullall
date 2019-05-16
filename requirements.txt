@@ -1,0 +1,4 @@
+colorama
+GitPython
+unittest
+progress
