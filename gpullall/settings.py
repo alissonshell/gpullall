@@ -18,6 +18,7 @@ def check_args(args):
     global fullscan
     global path
     global confirmpull
+    global ignore
     if args.directory:
         path = str(args.directory[0])
     else:
@@ -30,6 +31,9 @@ def check_args(args):
     if args.confirmall:
         confirmpull = True
 
+    if args.ignore:
+        ignore = str(args.ignore[0]).split(',')
+
 
 def init():
     global fullscan
@@ -37,16 +41,18 @@ def init():
     global confirmpull
     global path_exists
     global dir_exists
+    global ignore
     fullscan = False
     path = ""
     confirmpull = False
     path_exists = False
     dir_exists = False
+    ignore = []
 
     signal.signal(signal.SIGINT, handler_signal)
 
     check_args(parser.parse_args())
 
-    repositories = githelpers.get_repositories(path)
+    repositories = githelpers.get_repositories(path, ignore)
     for counter, repo in enumerate(repositories):
         githelpers.repo_actions(counter, repo, len(repositories))
