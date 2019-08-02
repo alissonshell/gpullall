@@ -6,9 +6,11 @@ import progressbar
 from colors import colors
 
 
-def get_repositories(path):
+def get_repositories(path, ignore):
     result = []
+
     for root, dirnames, _ in os.walk(str(path)):
+        dirnames[:] = [d for d in dirnames if d not in ignore]
         for dirname in dirnames:
             if dirname == ".git":
                 print(colors.GREEN
@@ -16,7 +18,6 @@ def get_repositories(path):
                       + os.path.basename(root)
                       + colors.NC)
                 result.append(os.path.abspath(root))
-
     return result
 
 
