@@ -15,4 +15,4 @@ Pull all your *git* repositories.
 
 ``--fullscan -F`` Search git repositories in your disk.
 
-``--ignore -I`` Ignore a folder(s). eg: "--ignore dir1,dir2,dir3..."
+``--ignore -I`` Ignore repositories. eg: "--ignore repo1,repo2,repo3..."
