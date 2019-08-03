@@ -16,5 +16,5 @@ parser.add_argument('--fullscan',
                     action="store_true")
 parser.add_argument('--ignore',
                     '-I',
-                    help="Ignore a folder(s). eg: --ignore dir1,dir2,dir3...",
+                    help="Ignore repositories. eg: --ignore repo1,repo2,repo3...",
                     nargs=1)
