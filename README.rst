@@ -5,9 +5,7 @@ Pull all your *git* repositories.
 
 **Installation**
 
-``pip install -r requirements.txt``
-
-``python setup.py install``
+``python3 setup.py install``
 
 **Usage**
 
