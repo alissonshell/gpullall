@@ -11,3 +11,6 @@ class ProgressBar(git.RemoteProgress):
         if max_count != self.bar.max:
             self.bar.max = max_count
         self.bar.goto(int(cur_count))
+
+    def finish(self):
+        self.bar.finish()
