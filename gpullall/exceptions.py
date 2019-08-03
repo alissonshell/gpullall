@@ -1,5 +1,5 @@
 import os
-from colors import colors
+from gpullall.colors import colors
 
 
 def show_err(ex):

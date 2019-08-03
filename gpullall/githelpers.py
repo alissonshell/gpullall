@@ -1,9 +1,9 @@
 import os
 import git
-import settings
-import exceptions
-import progressbar
-from colors import colors
+from gpullall import settings
+from gpullall import exceptions
+from gpullall import progressbar
+from gpullall.colors import colors
 
 
 def get_repositories(path, ignore):

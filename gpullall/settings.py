@@ -1,10 +1,10 @@
 import os
 import sys
 import signal
-import syshelpers
-import githelpers
-from colors import colors
-from argparser import parser
+from gpullall import syshelpers
+from gpullall import githelpers
+from gpullall.colors import colors
+from gpullall.argparser import parser
 
 
 def handler_signal(signum, frame):
