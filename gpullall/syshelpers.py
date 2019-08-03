@@ -1,6 +1,6 @@
 import os
-import settings
-import exceptions
+from gpullall import settings
+from gpullall import exceptions
 
 
 def read_path():
