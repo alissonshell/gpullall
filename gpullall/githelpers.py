@@ -28,6 +28,7 @@ def pull_repo(repo):
         pb = progressbar.ProgressBar()
         pb.setup(os.path.basename(repo))
         pullresult = origin.pull(progress=pb)[0]
+        pb.finish()
         print("\n")
         if pullresult.flags == 64:
             print(colors.GREEN
