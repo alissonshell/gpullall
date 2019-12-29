@@ -4,7 +4,7 @@ import signal
 
 
 def handler_signal(signum, frame):
-    from colors import Colors
+    from gpullall.colors import Colors
 
     print(Colors.YELLOW
           + '\nLeaving the application... \nBye'
@@ -13,7 +13,7 @@ def handler_signal(signum, frame):
 
 
 def check_args(args):
-    import syshelpers
+    from gpullall import syshelpers
 
     global fullscan
     global path
@@ -36,8 +36,8 @@ def check_args(args):
 
 
 def init():
-    import githelpers
-    from argparser import parser
+    from gpullall import githelpers
+    from gpullall.argparser import parser
 
     global fullscan
     global path
