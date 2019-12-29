@@ -1,4 +1,4 @@
-class colors:
+class Colors:
     RED = '\033[1;31m'
     GREEN = '\033[1;32m'
     CYAN = '\033[0;36m'
