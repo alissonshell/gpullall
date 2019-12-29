@@ -1,44 +1,51 @@
 import os
-from gpullall.colors import colors
 
 
 def show_err(ex):
+    from colors import Colors
+
     if ex.stdout:
         print("\n"
-              + colors.RED
+              + Colors.RED
               + "ERROR: "
               + ex.stdout.replace('stdout: ', '').replace('\'', '"')
-              + colors.NC)
+              + Colors.NC)
     if ex.stderr:
         print("\n"
-              + colors.RED
+              + Colors.RED
               + "ERROR: "
               + ex.stderr.replace('stderr: ', '').replace('\'', '"')
-              + colors.NC)
-    print(colors.YELLOW
+              + Colors.NC)
+    print(Colors.YELLOW
           + "Command \""
-          + ex._cmdline
+          + ex.stderr
           + "\" couldn't be done"
-          + colors.NC)
+          + Colors.NC)
 
 
 def folder_not_found(path):
-    print(colors.RED
+    from colors import Colors
+
+    print(Colors.RED
           + "The folder "
           + str(path)
           + " has not been found."
-          + colors.NC)
+          + Colors.NC)
 
 
 def pull_rejected():
-    print(colors.RED
+    from colors import Colors
+
+    print(Colors.RED
           + "Pull rejected."
-          + colors.NC)
+          + Colors.NC)
 
 
 def repo_not_updated(repo):
-    print(colors.RED
+    from colors import Colors
+
+    print(Colors.RED
           + "The repository "
           + os.path.basename(repo)
           + " will not be updated."
-          + colors.NC)
+          + Colors.NC)
