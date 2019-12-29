@@ -1,20 +1,20 @@
 import os
 import sys
 import signal
-from gpullall import syshelpers
-from gpullall import githelpers
-from gpullall.colors import colors
-from gpullall.argparser import parser
 
 
 def handler_signal(signum, frame):
-    print(colors.YELLOW
+    from colors import Colors
+
+    print(Colors.YELLOW
           + '\nLeaving the application... \nBye'
-          + colors.NC)
+          + Colors.NC)
     sys.exit(0)
 
 
 def check_args(args):
+    import syshelpers
+
     global fullscan
     global path
     global confirmpull
@@ -36,6 +36,9 @@ def check_args(args):
 
 
 def init():
+    import githelpers
+    from argparser import parser
+
     global fullscan
     global path
     global confirmpull

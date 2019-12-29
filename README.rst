@@ -5,7 +5,7 @@ Pull all your *git* repositories.
 
 **Installation**
 
-``python3 setup.py install``
+``pip install -e .``
 
 **Usage**
 

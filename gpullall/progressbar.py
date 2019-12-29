@@ -3,6 +3,11 @@ from progress.bar import IncrementalBar as Bar
 
 
 class ProgressBar(git.RemoteProgress):
+
+    def __init__(self):
+        super().__init__()
+        self.bar = Bar()
+
     def setup(self, repo_name):
         self.bar = Bar(message='git pull {}'.format(repo_name), suffix='')
 

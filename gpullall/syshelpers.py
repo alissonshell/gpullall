@@ -1,9 +1,10 @@
 import os
-from gpullall import settings
-from gpullall import exceptions
 
 
 def read_path():
+    import settings
+    import exceptions
+
     print("Let's find the directory you want to scan.")
 
     while not settings.dir_exists:
