@@ -1,4 +1,4 @@
-import settings
+from .settings import init
 
 
 def main():
