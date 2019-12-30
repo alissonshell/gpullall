@@ -2,8 +2,8 @@ import os
 
 
 def read_path():
-    import settings
-    import exceptions
+    from gpullall import settings
+    from gpullall import exceptions
 
     print("Let's find the directory you want to scan.")
 

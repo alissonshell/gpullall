@@ -3,7 +3,7 @@ import git
 
 
 def get_repositories(path, ignore):
-    from colors import Colors
+    from gpullall.colors import Colors
 
     result = []
 
@@ -20,9 +20,9 @@ def get_repositories(path, ignore):
 
 
 def pull_repo(repo):
-    import progressbar
-    from colors import Colors
-    import exceptions
+    from gpullall import progressbar
+    from gpullall.colors import Colors
+    from gpullall import exceptions
 
     try:
         gitrepository = git.Repo(repo)
@@ -48,9 +48,9 @@ def pull_repo(repo):
 
 
 def repo_actions(counter, repo, rep):
-    from colors import Colors
-    import settings
-    import exceptions
+    from gpullall.colors import Colors
+    from gpullall import settings
+    from gpullall import exceptions
 
     print(Colors.YELLOW
           + "Repository: "

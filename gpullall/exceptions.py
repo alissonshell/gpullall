@@ -2,7 +2,7 @@ import os
 
 
 def show_err(ex):
-    from colors import Colors
+    from gpullall.colors import Colors
 
     if ex.stdout:
         print("\n"
@@ -24,7 +24,7 @@ def show_err(ex):
 
 
 def folder_not_found(path):
-    from colors import Colors
+    from gpullall.colors import Colors
 
     print(Colors.RED
           + "The folder "
@@ -34,7 +34,7 @@ def folder_not_found(path):
 
 
 def pull_rejected():
-    from colors import Colors
+    from gpullall.colors import Colors
 
     print(Colors.RED
           + "Pull rejected."
@@ -42,7 +42,7 @@ def pull_rejected():
 
 
 def repo_not_updated(repo):
-    from colors import Colors
+    from gpullall.colors import Colors
 
     print(Colors.RED
           + "The repository "
