@@ -19,13 +19,31 @@ def get_repositories(path, ignore):
     return result
 
 
+def commit_repo(repo):
+    from gpullall import exceptions
+    try:
+        gitrepository = git.Repo(repo)
+        option = input("Do you want to commit your changes? "
+                       + " from remote? Y/n ")
+        if option == "Y":
+            gitrepository.commit('master')
+    except git.GitCommandError as ex:
+        exceptions.show_err(ex)
+
+
 def pull_repo(repo):
     from gpullall import progressbar
     from gpullall.colors import Colors
     from gpullall import exceptions
+    from gpullall import settings
 
     try:
         gitrepository = git.Repo(repo)
+        if gitrepository.is_dirty():
+            if settings.commit:
+                commit_repo(repo)
+            if settings.stash:
+                git_stash(repo)
         origin = gitrepository.remotes.origin
         pb = progressbar.ProgressBar()
         pb.setup(os.path.basename(repo))
@@ -42,6 +60,8 @@ def pull_repo(repo):
                   + Colors.NC)
         elif pullresult.flags == 16:
             exceptions.pull_rejected()
+        if settings.stash:
+            git_stash_pop(repo)
         print("\n")
     except git.GitCommandError as ex:
         exceptions.show_err(ex)
@@ -83,3 +103,21 @@ def repo_actions(counter, repo, rep):
         print(Colors.YELLOW
               + "End."
               + Colors.NC)
+
+
+def git_stash(repo):
+    from gpullall import exceptions
+    try:
+        gitrepository = git.Repo(repo)
+        gitrepository.git.stash()
+    except git.GitCommandError as ex:
+        exceptions.show_err(ex)
+
+
+def git_stash_pop(repo):
+    from gpullall import exceptions
+    try:
+        gitrepository = git.Repo(repo)
+        gitrepository.git.stash.pop()
+    except git.GitCommandError as ex:
+        exceptions.show_err(ex)
