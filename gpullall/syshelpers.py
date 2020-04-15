@@ -1,6 +1,10 @@
 import os
 
 
+def remove_file(file):
+    os.remove(file)
+
+
 def read_path():
     from gpullall import settings
     from gpullall import exceptions
