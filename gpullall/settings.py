@@ -19,6 +19,8 @@ def check_args(args):
     global path
     global confirmpull
     global ignore
+    global commit
+    global stash
     if args.directory:
         path = str(args.directory[0])
     else:
@@ -34,6 +36,12 @@ def check_args(args):
     if args.ignore:
         ignore = str(args.ignore[0]).split(',')
 
+    if args.commit:
+        commit = True
+
+    if args.stash:
+        stash = True
+
 
 def init():
     from gpullall import githelpers
@@ -45,12 +53,16 @@ def init():
     global path_exists
     global dir_exists
     global ignore
+    global commit
+    global stash
     fullscan = False
     path = ""
     confirmpull = False
     path_exists = False
     dir_exists = False
     ignore = []
+    commit = False
+    stash = False
 
     signal.signal(signal.SIGINT, handler_signal)
 
