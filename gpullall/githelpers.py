@@ -21,6 +21,7 @@ def get_repositories(path, ignore):
 
 def commit_repo(repo):
     from gpullall import exceptions
+    from gpullall.colors import Colors
     try:
         gitrepository = git.Repo(repo)
         index = gitrepository.index
@@ -43,6 +44,21 @@ def pull_repo(repo):
 
     try:
         gitrepository = git.Repo(repo)
+        gitmail = gitrepository.config_reader().get_value("user", "email")
+        if not gitmail:
+            print(Colors.YELLOW
+                  + "There's not a globa user for this repository."
+                  + Colors.NC)
+            gitrepository.config_writer().set_value("user",
+                                                    "name",
+                                                    "gpullalluser").release()
+            clean_config_lock(repo)
+            gitrepository.config_writer().set_value("user",
+                                                    "email",
+                                                    "gpullall@gpullallmail.ex")
+            clean_config_lock(repo)
+            gitmail = "gpullall@gpullallmail.ex"
+
         if gitrepository.is_dirty():
             print(Colors.YELLOW
                   + "There are pending changes in the repository."
@@ -82,6 +98,17 @@ def pull_repo(repo):
         if settings.stash:
             git_stash_apply(repo)
         print("\n")
+        if gitmail == "gpullall@gpullallmail.ex":
+            clean_config_lock(repo)
+            gitrepository.config_writer().set_value("user",
+                                                    "name",
+                                                    "gpullalluser").release()
+            clean_config_lock(repo)
+            gitrepository.config_writer().set_value("user",
+                                                    "email",
+                                                    "gpullall@gpullallmail.ex")
+            clean_config_lock(repo)
+
     except git.GitCommandError as ex:
         exceptions.show_err(ex)
 
@@ -126,6 +153,8 @@ def repo_actions(counter, repo, rep):
 
 def git_stash(repo):
     from gpullall import exceptions
+    from gpullall.colors import Colors
+
     try:
         gitrepository = git.Repo(repo)
         gitrepository.git.stash('save')
@@ -138,15 +167,26 @@ def git_stash(repo):
 
 def git_stash_apply(repo):
     from gpullall import exceptions
+    from gpullall.colors import Colors
+
     try:
         gitrepository = git.Repo(repo)
         gitrepository.git.stash('apply')
         print(Colors.GREEN
               + "Your stashed changes have been applied."
               + Colors.NC)
+        print("\n")
         print(Colors.YELLOW
               + "Dropping the stash..."
               + Colors.NC)
         gitrepository.git.stash('drop')
     except git.GitCommandError as ex:
         exceptions.show_err(ex)
+
+
+def clean_config_lock(repo):
+    from gpullall import syshelpers
+    gitrepository = git.Repo(repo)
+
+    syshelpers.remove_file(gitrepository.working_tree_dir
+                           + "/.git/config.lock")
