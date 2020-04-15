@@ -42,27 +42,38 @@ def pull_repo(repo):
     from gpullall import exceptions
     from gpullall import settings
 
+    dostash = False
+    gitmail = ""
+
     try:
         gitrepository = git.Repo(repo)
-        gitmail = gitrepository.config_reader().get_value("user", "email")
-        if not gitmail:
-            print(Colors.YELLOW
-                  + "There's not a globa user for this repository."
-                  + Colors.NC)
-            gitrepository.config_writer().set_value("user",
-                                                    "name",
-                                                    "gpullalluser").release()
-            clean_config_lock(repo)
-            gitrepository.config_writer().set_value("user",
-                                                    "email",
-                                                    "gpullall@gpullallmail.ex")
-            clean_config_lock(repo)
-            gitmail = "gpullall@gpullallmail.ex"
-
         if gitrepository.is_dirty():
             print(Colors.YELLOW
                   + "There are pending changes in the repository."
                   + Colors.NC)
+
+            gitmail = gitrepository.config_reader().get_value("user", "email")
+            if not gitmail:
+                print(Colors.YELLOW
+                      + "There's no global user"
+                      + "configuration for this repository."
+                      + Colors.NC)
+                gitrepository.config_writer().set_value("user",
+                                                        "name",
+                                                        "gpullall").release()
+                clean_config_lock(repo)
+                gitrepository.config_writer().set_value("user",
+                                                        "email",
+                                                        "gpullall@mail.ex")
+                clean_config_lock(repo)
+                gitmail = "gpullall@gpullallmail.ex"
+                print("\n")
+                print(Colors.PURPLE
+                      + "user gpullall"
+                      + " and email gpullall@mail.ex"
+                      + " have been created to stash/commit the repository."
+                      + Colors.NC)
+                print("\n")
             if settings.commit:
                 commit_repo(repo)
             elif not settings.commit and not settings.stash:
@@ -77,7 +88,7 @@ def pull_repo(repo):
                 option = input("Do you want to stash your changes? "
                                + "Y/n: ")
                 if option == "Y":
-                    settings.stash = True
+                    dostash = True
                     git_stash(repo)
         origin = gitrepository.remotes.origin
         pb = progressbar.ProgressBar()
@@ -95,18 +106,18 @@ def pull_repo(repo):
                   + Colors.NC)
         elif pullresult.flags == 16:
             exceptions.pull_rejected()
-        if settings.stash:
+        if dostash:
             git_stash_apply(repo)
         print("\n")
         if gitmail == "gpullall@gpullallmail.ex":
             clean_config_lock(repo)
             gitrepository.config_writer().set_value("user",
                                                     "name",
-                                                    "gpullalluser").release()
+                                                    "").release()
             clean_config_lock(repo)
             gitrepository.config_writer().set_value("user",
                                                     "email",
-                                                    "gpullall@gpullallmail.ex")
+                                                    "")
             clean_config_lock(repo)
 
     except git.GitCommandError as ex:
@@ -118,37 +129,40 @@ def repo_actions(counter, repo, rep):
     from gpullall import settings
     from gpullall import exceptions
 
-    print(Colors.YELLOW
-          + "Repository: "
-          + repo
-          + Colors.NC)
-    branch = git.Repo(repo).active_branch.name
-    print(Colors.CYAN
-          + "Current branch: "
-          + branch
-          + Colors.NC)
-    if settings.confirmpull:
-        pull_repo(repo)
-    else:
-        option = input("Do you want to pull "
-                       + os.path.basename(repo)
-                       + " from remote? Y/n ")
-        if option == "Y":
+    try:
+        print(Colors.YELLOW
+              + "Repository: "
+              + repo
+              + Colors.NC)
+        branch = git.Repo(repo).active_branch.name
+        print(Colors.CYAN
+              + "Current branch: "
+              + branch
+              + Colors.NC)
+        if settings.confirmpull:
             pull_repo(repo)
         else:
-            exceptions.repo_not_updated(repo)
-    if counter not in {1, rep - 1}:
-        print(Colors.PURPLE
-              + "========    "
-              + Colors.CYAN
-              + "Next Repo    "
-              + Colors.PURPLE
-              + "========"
-              + Colors.NC)
-    else:
-        print(Colors.YELLOW
-              + "End."
-              + Colors.NC)
+            option = input("Do you want to pull "
+                           + os.path.basename(repo)
+                           + " from remote? Y/n ")
+            if option == "Y":
+                pull_repo(repo)
+            else:
+                exceptions.repo_not_updated(repo)
+        if counter not in {1, rep - 1}:
+            print(Colors.PURPLE
+                  + "========    "
+                  + Colors.CYAN
+                  + "Next Repo    "
+                  + Colors.PURPLE
+                  + "========"
+                  + Colors.NC)
+        else:
+            print(Colors.YELLOW
+                  + "End."
+                  + Colors.NC)
+    except git.GitCommandError as ex:
+        exceptions.show_err(ex)
 
 
 def git_stash(repo):
@@ -188,5 +202,7 @@ def clean_config_lock(repo):
     from gpullall import syshelpers
     gitrepository = git.Repo(repo)
 
-    syshelpers.remove_file(gitrepository.working_tree_dir
-                           + "/.git/config.lock")
+    configlockfile = gitrepository.working_tree_dir + "/.git/config.lock"
+
+    if os.path.isfile(configlockfile):
+        syshelpers.remove_file(configlockfile)
