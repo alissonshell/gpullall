@@ -51,29 +51,26 @@ def pull_repo(repo):
             print(Colors.YELLOW
                   + "There are pending changes in the repository."
                   + Colors.NC)
+            print("\n")
+            print(Colors.RED
+                  + "Your local chagens could be overwritten."
+                  + Colors.NC)
+            print("\n")
+
+            if settings.addchanges:
+                gitrepository.git.add(u=True)
+            elif not settings.addchanges:
+
+                option = input("Do you want to add all your local changes "
+                               + "to Git's \"Staging Area\"? "
+                               + "Y/n: ")
+                if option == "Y":
+                    gitrepository.git.add(u=True)
 
             gitmail = gitrepository.config_reader().get_value("user", "email")
             if not gitmail:
-                print(Colors.YELLOW
-                      + "There's no global user"
-                      + "configuration for this repository."
-                      + Colors.NC)
-                gitrepository.config_writer().set_value("user",
-                                                        "name",
-                                                        "gpullall").release()
-                clean_config_lock(repo)
-                gitrepository.config_writer().set_value("user",
-                                                        "email",
-                                                        "gpullall@mail.ex")
-                clean_config_lock(repo)
-                gitmail = "gpullall@gpullallmail.ex"
-                print("\n")
-                print(Colors.PURPLE
-                      + "user gpullall"
-                      + " and email gpullall@mail.ex"
-                      + " have been created to stash/commit the repository."
-                      + Colors.NC)
-                print("\n")
+                gitmail = temporary_user_config(repo)
+
             if settings.commit:
                 commit_repo(repo)
             elif not settings.commit and not settings.stash:
@@ -110,15 +107,7 @@ def pull_repo(repo):
             git_stash_apply(repo)
         print("\n")
         if gitmail == "gpullall@gpullallmail.ex":
-            clean_config_lock(repo)
-            gitrepository.config_writer().set_value("user",
-                                                    "name",
-                                                    "").release()
-            clean_config_lock(repo)
-            gitrepository.config_writer().set_value("user",
-                                                    "email",
-                                                    "")
-            clean_config_lock(repo)
+            remove_temporary_user_config(repo)
 
     except git.GitCommandError as ex:
         exceptions.show_err(ex)
@@ -171,7 +160,7 @@ def git_stash(repo):
 
     try:
         gitrepository = git.Repo(repo)
-        gitrepository.git.stash('save')
+        gitrepository.git.stash('--keep-index')
         print(Colors.YELLOW
               + "Your changes have been stashed."
               + Colors.NC)
@@ -198,8 +187,50 @@ def git_stash_apply(repo):
         exceptions.show_err(ex)
 
 
+def temporary_user_config(repo):
+    from gpullall.colors import Colors
+
+    gitrepository = git.Repo(repo)
+
+    print(Colors.YELLOW
+          + "There's no global user"
+          + "configuration for this repository."
+          + Colors.NC)
+    gitrepository.config_writer().set_value("user",
+                                            "name",
+                                            "gpullall").release()
+    clean_config_lock(repo)
+    gitrepository.config_writer().set_value("user",
+                                            "email",
+                                            "gpullall@gpullallmail.ex")
+    clean_config_lock(repo)
+    print("\n")
+    print(Colors.PURPLE
+          + "user gpullall"
+          + " and email gpullall@gpullallmail.ex"
+          + " have been created to stash/commit the repository."
+          + Colors.NC)
+    print("\n")
+    return "gpullall@gpullallmail.ex"
+
+
+def remove_temporary_user_config(repo):
+    gitrepository = git.Repo(repo)
+
+    clean_config_lock(repo)
+    gitrepository.config_writer().set_value("user",
+                                            "name",
+                                            "").release()
+    clean_config_lock(repo)
+    gitrepository.config_writer().set_value("user",
+                                            "email",
+                                            "")
+    clean_config_lock(repo)
+
+
 def clean_config_lock(repo):
     from gpullall import syshelpers
+
     gitrepository = git.Repo(repo)
 
     configlockfile = gitrepository.working_tree_dir + "/.git/config.lock"

@@ -21,6 +21,7 @@ def check_args(args):
     global ignore
     global commit
     global stash
+    global addchanges
     if args.directory:
         path = str(args.directory[0])
     else:
@@ -35,6 +36,9 @@ def check_args(args):
 
     if args.ignore:
         ignore = str(args.ignore[0]).split(',')
+
+    if args.add:
+        addchanges = True
 
     if args.commit:
         commit = True
@@ -53,6 +57,7 @@ def init():
     global path_exists
     global dir_exists
     global ignore
+    global addchanges
     global commit
     global stash
     fullscan = False
@@ -61,6 +66,7 @@ def init():
     path_exists = False
     dir_exists = False
     ignore = []
+    addchanges = False
     commit = False
     stash = False
 
