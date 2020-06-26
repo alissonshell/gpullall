@@ -88,20 +88,21 @@ def pull_repo(repo):
                     dostash = True
                     git_stash(repo)
         origin = gitrepository.remotes.origin
+        previousflag = origin.fetch()[0]
         pb = progressbar.ProgressBar()
         pb.setup(os.path.basename(repo))
-        pullresult = origin.pull(progress=pb)[0]
+        origin.pull(progress=pb)
         pb.finish()
         print("\n")
-        if pullresult.flags == 64:
+        if previousflag.flags == 64:
             print(Colors.GREEN
                   + "Repository updated."
                   + Colors.NC)
-        elif pullresult.flags == 4:
+        elif previousflag.flags == 4:
             print(Colors.GREEN
                   + "Already up to date."
                   + Colors.NC)
-        elif pullresult.flags == 16:
+        elif previousflag.flags == 16:
             exceptions.pull_rejected()
         if dostash:
             git_stash_apply(repo)
