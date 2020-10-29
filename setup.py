@@ -13,7 +13,7 @@ requirements = ['colorama', 'GitPython', 'progress']
 
 setup(
         author="0xComposure",
-        author_email="0xComposure@gmail.com",
+        author_email="xxcomposurexx@gmail.com",
         classifiers=[
             'License :: OSI Approved :: MIT License',
             'Development Status :: 4 - Beta',
@@ -39,7 +39,7 @@ setup(
             "console_scripts": ["gpullall = gpullall.__main__:init"]
         },
         setup_requires=requirements,
-        url="https://github.com/0xComposure/gpullall",
+        url="https://github.com/0xcomposure/gpullall",
         version="1.0.0",
         zip_safe=False,
 )
